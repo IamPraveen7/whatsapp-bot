@@ -10,14 +10,16 @@ client: Optional[AsyncIOMotorClient] = None
 db: Optional[AsyncIOMotorDatabase] = None
 
 async def connect_db():
+    ssl_context = ssl.create_default_context(cafile=certifi.where())
+    ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
     global client, db
-    if client is None:
+    if client is None:        
         client = AsyncIOMotorClient(
             MONGO_URI,
             tls=True,
-            tlsAllowInvalidCertificates=True,  # allows handshake to succeed
-            maxPoolSize=20,
-            serverSelectionTimeoutMS=10000,
+            tlsCAFile=certifi.where(),
+            tls=True,
+            ssl=ssl_context  # if pymongo version supports it
         )
         try:
             await client.admin.command("ping")
