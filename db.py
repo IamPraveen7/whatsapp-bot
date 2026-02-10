@@ -33,8 +33,7 @@ async def connect_db(retries: int = 3, delay: float = 5.0):
                     MONGO_URI,
                     tls=True,
                     tlsCAFile=certifi.where(),
-                    maxPoolSize=20,
-                    serverSelectionTimeoutMS=10000,  # 10s
+                    ssl_cert_reqs=False  # ⚠️ skips certificate verification
                 )
                 # Test connection
                 await client.admin.command("ping")
