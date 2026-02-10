@@ -1,37 +1,37 @@
-import ssl
-import certifi
-from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
-from typing import Optional
 import os
+import certifi
+from typing import Optional
 
-MONGO_URI = os.getenv("MONGO_URI")
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
+
+# === Config ===
+MONGO_URI = os.getenv("MONGO_URI")  # Set this in Render secrets
 DB_NAME = "phishing_bot"
 
+# === Globals ===
 client: Optional[AsyncIOMotorClient] = None
 db: Optional[AsyncIOMotorDatabase] = None
 
+# === Connect to MongoDB ===
 async def connect_db():
     global client, db
     if client is None:
-        # create SSL context
-        ssl_context = ssl.create_default_context(cafile=certifi.where())
-        ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2  # enforce TLS 1.2
-
-        client = AsyncIOMotorClient(
-            MONGO_URI,
-            tls=True,
-            tlsCAFile=certifi.where(),
-            ssl=ssl_context,  # pass the context
-            maxPoolSize=20,
-            serverSelectionTimeoutMS=10000,
-        )
         try:
+            client = AsyncIOMotorClient(
+                MONGO_URI,
+                tls=True,                   # Enable TLS/SSL
+                tlsCAFile=certifi.where(),  # Use certifi CA bundle
+                maxPoolSize=20,
+                serverSelectionTimeoutMS=10000,
+            )
+            # Verify connection
             await client.admin.command("ping")
         except Exception as e:
             client = None
             raise ConnectionError(f"MongoDB connection failed: {e}")
         db = client[DB_NAME]
 
+# === Close connection ===
 async def close_db():
     global client, db
     if client:
@@ -39,6 +39,7 @@ async def close_db():
         client = None
         db = None
 
+# === FastAPI Dependency ===
 async def get_db() -> AsyncIOMotorDatabase:
     if db is None:
         await connect_db()
