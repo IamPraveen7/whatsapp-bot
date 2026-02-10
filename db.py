@@ -14,8 +14,9 @@ async def connect_db():
     if client is None:
         client = AsyncIOMotorClient(
             MONGO_URI,
-            tls=True,                     # enable TLS
-            tlsCAFile=certifi.where(),    # use certifi CA
+            tls=True,
+            tlsCAFile=certifi.where(),
+            tlsAllowInvalidCertificates=True,  # TEMP workaround
             maxPoolSize=20,
             serverSelectionTimeoutMS=10000,
         )
