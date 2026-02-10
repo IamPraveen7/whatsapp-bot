@@ -14,10 +14,7 @@ async def connect_db():
     if client is None:
         client = AsyncIOMotorClient(
             MONGO_URI,
-            tls=True,
-            tlsCAFile=certifi.where(),
             serverSelectionTimeoutMS=10000,
-            maxPoolSize=20,
         )
         try:
             # ping to check connection
