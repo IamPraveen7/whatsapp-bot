@@ -2,7 +2,6 @@ import certifi
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 import os
 from typing import Optional
-import ssl
 
 MONGO_URI = os.getenv("MONGO_URI")
 DB_NAME = "phishing_bot"
@@ -11,15 +10,14 @@ client: Optional[AsyncIOMotorClient] = None
 db: Optional[AsyncIOMotorDatabase] = None
 
 async def connect_db():
-    ssl_context = ssl.create_default_context(cafile=certifi.where())
-    ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
     global client, db
-    if client is None:        
+    if client is None:
         client = AsyncIOMotorClient(
             MONGO_URI,
-            tls=True,
-            tlsCAFile=certifi.where(),
-            ssl=ssl_context  # if pymongo version supports it
+            tls=True,                     # enable TLS
+            tlsCAFile=certifi.where(),    # use certifi CA
+            maxPoolSize=20,
+            serverSelectionTimeoutMS=10000,
         )
         try:
             await client.admin.command("ping")
