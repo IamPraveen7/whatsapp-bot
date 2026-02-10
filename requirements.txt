@@ -5,3 +5,4 @@ httpx>=0.28.0,<0.29.0
 twilio==9.10.1
 motor==3.7.1  # async MongoDB driver
 tldextract
+pymongo>=3.12
