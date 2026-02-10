@@ -10,15 +10,16 @@ client: Optional[AsyncIOMotorClient] = None
 db: Optional[AsyncIOMotorDatabase] = None
 
 async def connect_db():
+    ssl_context = ssl.create_default_context(cafile=certifi.where())
+    ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
     global client, db
     if client is None:
         client = AsyncIOMotorClient(
-            MONGO_URI,
-            tls=True,                     # enable TLS
-            tlsCAFile=certifi.where(),    # use certifi CA
-            maxPoolSize=20,
-            serverSelectionTimeoutMS=10000,
-        )
+                MONGO_URI,
+                tls=True,
+                tlsCAFile=certifi.where(),
+                ssl=ssl_context
+            )
         try:
             await client.admin.command("ping")
         except Exception as e:
