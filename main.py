@@ -18,7 +18,8 @@ from services.url_utils import extract_domain
 
 app = FastAPI()
 
-@app.post("/webhook/whatsapp")
+#/webhook/whatsapp
+@app.post("/")
 async def whatsapp_webhook(
     request: Request,
     _: None = Depends(validate_twilio_request),
