@@ -6,3 +6,4 @@ twilio==9.10.1
 pymongo>=4.3.1
 motor>=3.7.1  # async MongoDB driver
 tldextract
+pyOpenSSL>=23.2.0
