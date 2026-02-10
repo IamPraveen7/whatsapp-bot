@@ -2,6 +2,7 @@ import certifi
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 import os
 from typing import Optional
+import ssl
 
 MONGO_URI = os.getenv("MONGO_URI")
 DB_NAME = "phishing_bot"
