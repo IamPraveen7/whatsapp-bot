@@ -18,7 +18,6 @@ async def connect_db():
             MONGO_URI,
             tls=True,
             tlsCAFile=certifi.where(),
-            tls=True,
             ssl=ssl_context  # if pymongo version supports it
         )
         try:
