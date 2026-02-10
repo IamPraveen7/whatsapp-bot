@@ -1,7 +1,9 @@
+import os
+import certifi
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
-from config import MONGO_URI
 from typing import Optional
 
+MONGO_URI = os.getenv("MONGO_URI")  # Render secret
 DB_NAME = "phishing_bot"
 
 client: Optional[AsyncIOMotorClient] = None
@@ -12,11 +14,12 @@ async def connect_db():
     if client is None:
         client = AsyncIOMotorClient(
             MONGO_URI,
+            tlsCAFile=certifi.where(),   # important for Render TLS
             maxPoolSize=20,
             serverSelectionTimeoutMS=10000,
         )
         try:
-            # Ping to verify connection
+            # Verify connection
             await client.admin.command("ping")
         except Exception as e:
             client = None
